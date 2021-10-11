@@ -1,6 +1,5 @@
 const Discord = require("discord.js")
 const Client = new Discord.Client();
-const config = require('./config.json');
 
 //let settings = [];
 const statusz = [];
@@ -105,4 +104,4 @@ Client.on("message", async message => {
     }
 
 
-Client.login(require(__dirname + '/config.json').token);
+Client.login(NzYwNDYzMzIxMDg5OTY2MDgw.X3MaqA.YnYW5nIbjAke1F-iVKDxhCl0jGs);
