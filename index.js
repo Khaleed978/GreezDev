@@ -20,7 +20,7 @@ const Jimp = require('jimp');//nyem is online :c ki? :c sasi de attól még el t
 const cooldowns = new Discord.Collection();//ha nem baj akkor lopok cooldown kódot xd xd
 const ownerIds = ["512337264303538187", "481840148623917076"];
 const commandList = [];
-const statusz = ["Greez:tm: v1.0","Dev: P4TR1K","Head Dev: Khaleed_"];
+const statusz = ["GreezDev v1.0","Github Dotonál!","FőFejlesztő: Khaleed_"];
 bot.on("ready", () => {
     console.log("A bot elindult!")
     
@@ -91,12 +91,7 @@ function cdFunction(message,timeinseconds){
     },timeinseconds*1000)
 }
 
-bot.on('message', async message => {
-    antiLink(bot, message, {
-        staffRole: "739536919368695959",
-        warnMSG: `A szerveren nincs engedélyezve a discord meghívók csatolása! (<@${message.author.id}>)`
-    });
-});
+
 bot.on("message", async message => { // az index.js-t nem kell a commandsba rakni? akkor hogy indítod el? xd
     if (message.author.bot) return;
     let devmode = require(__dirname + "/devmode.json").enabled;
