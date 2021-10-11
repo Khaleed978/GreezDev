@@ -6,14 +6,7 @@ const fs = require('fs');
 const opusscript = require('opusscript');
 const servers = [];
 const config = require('./config.json');
-const antispam = require('antispam-guard');
-const alt = require("discord-anti-alt");
-const account = new alt.config({
-    days: 2,
-    options: "kick"
-});
 
-let altChannel = "824569788645769226";
 
 bot.on('guildMemberAdd', async member => {
     let play = account.run(member);
