@@ -8,33 +8,7 @@ const servers = [];
 const config = require('./config.json');
 
 
-bot.on('guildMemberAdd', async member => {
-    let play = account.run(member);
-    let info = alt.profile(member);
-    if(play) {
-        var altEmbed = new Discord.MessageEmbed()
-        .setAuthor(info.userTag,info.avatar)
-        .setTitle("Alt account")
-        .setColor("RANDOM")
-        .setDescription(`Felhasználónév: **${info.username}** \nFelhasználó ID: **${info.userID}** \nFelhasználó létrehozási dátuma: **${info.userAge}**`)
-        .setFooter("Greez bot | Alt account logger")
-        .setTimestamp();
-        return member.guild.channels.cache.get(altChannel).send(altEmbed);
-    }
-})
-bot.config = config;
-const { GiveawaysManager } = require('discord-giveaways');
-// mi a baja vele mert már egy jóideje nézem és semmi hibát nem látok benne :c én sem tudom :c
-bot.GiveawaysManager = new GiveawaysManager(bot, {
-    storage: "./giveaways.json",
-    updateCountdownEvery: 5000,
-    default: {
-        botsCanWin: false,
-        exemptPermissions: ["MANAGE_MESSAGES", "ADMINISTRATOR"],//nem ez? mind a kettőnknek van ilyen joga 
-        embedColor: "#FF0000",
-        reaction: "🎉"
-    }
-});
+
 //minyáu köszönömc:
 const mysql = require('mysql2');
 const mysqlPool = mysql.createPool({
