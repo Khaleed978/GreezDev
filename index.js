@@ -6,7 +6,6 @@ const fs = require('fs');
 const opusscript = require('opusscript');
 const servers = [];
 const config = require('./config.json');
-const antiLink = require("anti-link-discord");
 const antispam = require('antispam-guard');
 const alt = require("discord-anti-alt");
 const account = new alt.config({
