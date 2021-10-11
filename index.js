@@ -1,29 +1,14 @@
-/*még a notepad++ is jobb mint a sima notepad c: c:200iq*/const ytdl = require('ytdl-core');
-let devmodeReason = "XP system elkészítése";
-const Discord = require(`discord.js`);
-const bot = new Discord.Client();
-const fs = require('fs');
-const opusscript = require('opusscript');
-const servers = [];
+const Discord = require("discord.js")
+const Client = new Discord.Client();
 const config = require('./config.json');
 
+//let settings = [];
+const statusz = [];
+Client.on("ready", () => {
+    console.log(`A bot elindult! ennyi szerveren elérhető a bot ->` + Client.guilds.size)
 
+    const statusz = ["Ticket Tool", "t!ticket-setup", "Support & Invite ", "t!invite"];
 
-//minyáu köszönömc:
-
-const onevoneStats = {};
-let queue = new Map();
-//
-const Jimp = require('jimp');//nyem is online :c ki? :c sasi de attól még el tudja lopni c: majd én meg feltöröm a szobályát JAH VÁRJ. MÁR FELTÖRTEM MIVEL RAJZOLSZ? XDxdJAAAAAAAAAAAAAAAAAAAAAAAAAAAA ZOOMIT    
-//mi lenne ha csinálnék command handlert? c: öööööööööö azzal könnyebb? :3 találtam rá Ha úgy gondolod :3 c: KUSSOLJ WINDOWS, MINDENKI LESZARJA xdddez akkor a legjobb amikor pvpzek megjelenik a szövehg és letárcázódik az mc OOF XD kódot lyami
-//lopok kódot innét
-const cooldowns = new Discord.Collection();//ha nem baj akkor lopok cooldown kódot xd xd
-const ownerIds = ["512337264303538187", "481840148623917076"];
-const commandList = [];
-const statusz = ["GreezDev v1.0","Github Dotonál!","FőFejlesztő: Khaleed_"];
-bot.on("ready", () => {
-    console.log("A bot elindult!")
-    
     var i = -1;
     //trédmárk xd
     setInterval(function() {
@@ -33,446 +18,91 @@ bot.on("ready", () => {
             i = 0;
             o = 1;
         }
-        const statuz = [statusz[i]]
+        const statuz = [Client.guilds.size + " szerveren | " + statusz[i]]
 
 
         const randomStatuz = statuz[0];
-        bot.user.setActivity(randomStatuz, {
+        Client.user.setActivity(randomStatuz, {
             type: "WATCHING",
             url: "https://twitch.tv/."
         });
     }, 5000)
-
 });
-bot.on('message', msg => {
-    bot.emit('checkMessage', msg);
-})
-function fancyTimeFormat(duration) {
-    // e
-    var hrs = ~~(duration / 3600);
-    var mins = ~~((duration % 3600) / 60);
-    var secs = ~~duration % 60;
+Client.on("message", async message => {
+  if (message.author.bot) return;
+  if (message.channel.type === "dm");
 
-    // e
-    var ret = "";
-
-    if (hrs > 0) {
-        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-    }
-
-    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-    ret += "" + secs;
-    return ret;
-}
-
-let version = 0;
-let points = 0;
-bot.commands=new Discord.Collection();
-let cooldown = {};
-fs.readdir(__dirname + "/commands",(err,files) => {
-    if(err) console.log(err);
-    let jsfiles = files.filter(f=>f.split(".").pop() === "js");
-    if(jsfiles.length <= 0){
-        console.log("Nincs mit betölteni a commands mappából");
-        return;
-    }
-    console.log(` | ${jsfiles.length} parancsfájl betöltése... |`);
-    jsfiles.forEach((f,i) => {
-        let props = require('./commands/'+f);
-        if(!props.help.name) return console.log(` | ${i+1}. ${f.substring(0,f.length-3)}.js -   X`)
-        bot.commands.set(props.help.name,props);
-        commandList.push(props.help.name);
-        console.log(` | ${i+1}. ${f.substring(0,f.length-3)}.js -  ✅ `)
-    })
-})
-function cdFunction(message,timeinseconds){
-    setTimeout(function(){
-        cooldown[message.author.id] = {};
-    },timeinseconds*1000)
-}
-
-
-bot.on("message", async message => { // az index.js-t nem kell a commandsba rakni? akkor hogy indítod el? xd
-    if (message.author.bot) return;
-    let devmode = require(__dirname + "/devmode.json").enabled;
-    if (message.channel.type === "dm") return;
-    var prefix = ">";
-    
+    //nesze ennyi volt XD join leave? mert nkm spameli a gecibexd
+    //Prefix
+    var prefix = "t!";
     let messageArray = message.content.split(" ");
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
 
-    if(cmd === "<@!738730932990771261>") {
-        var hyEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setTitle("Greez™#1117")
-        .setThumbnail(bot.user.avatarURL)
-        .setDescription("Helló! A prefixem `>` \n Segítségre van szükséged? Használd a `>help (probléma)` parancsot, vagy a fejlesztőket privátban! \n Bot fejlesztők `P4TR1K` - `P4TR1K#5089` & `chlkrisz` - `chlkrisz#0110` \n Parancsok `>parancsok`");
-        message.channel.send(hyEmbed);//én felakasztom magamXD
-    }// itt lenni? :c
-    if(cmd === "<@738730932990771261>") {
-        var hyEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setTitle("Greez™#1117")
-        .setThumbnail(bot.user.avatarURL)
-        .setDescription("Helló! A prefixem `>` \n Segítségre van szükséged? Használd a `>help (probléma)` parancsot, vagy a fejlesztőket privátban! \n Bot fejlesztő `P4TR1K` - `P4TR1K#5089` \n Parancsok `>parancsok`");
-        message.channel.send(hyEmbed);
-    }
+      if (cmd === `${prefix}ticket-setup`) {
+        // ticket-setup #channel
+        if (!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("Nincs jogod ehhez!");
+        let channel = message.mentions.channels.first();
+        if (!channel) return message.reply("Használat: `" + prefix + "ticket-setup #channel`");
 
-    
-  
-    
-    //----------------------------------------------------------------------------//
-    //kövi command mi legyen? c: öööö a tegnapi devmode-ot folytatjuk? :3 iken, de nehéz lesz egy picit :c
+        let sent = await channel.send(new Discord.RichEmbed()
+            .setTitle("`Ticket rendszer`")
+            .setDescription("Reagálj hogy nyiss egy ticketet!")
+            .setThumbnail("https://cdn.discordapp.com/attachments/558734913751482388/759406266224738324/042e160b-4663-42fb-c284-4531778c7cc3-adsasd.png")
+            .setFooter(Client.user.tag, Client.user.displayAvatarURL)
+            .setColor("#2da4bb")
+        );
+        if (!tickets[message.guild.id]) tickets[message.guild.id] = {};
+        tickets[message.guild.id].ticket = {
+            msg: sent
+        };
+        if (!tickets[message.guild.id].ticketList) tickets[message.guild.id].ticketList = {};
+        sent.react(':ticket:');
+        const reactFilter = (reaction, user) => {
+            return reaction.emoji.name === ':ticket:' && sent.author.id != user.id;
+        }
+        const reactCollect = sent.createReactionCollector(reactFilter);
+        reactCollect.on('collect', async reaction => {
+            let userxd = reaction.users.last();
+            reaction.remove(userxd);
+            let channel = await message.guild.createChannel("ticket-" + userxd.id);
+            channel.overwritePermissions(message.guild.defaultRole.id, { READ_MESSAGES: false, SEND_MESSAGES: false });
+            channel.overwritePermissions(userxd.id, { READ_MESSAGES: true, SEND_MESSAGES: true })
+            let embedxd = new Discord.RichEmbed()
+                .setTitle("#TICKET-" + userxd.id + "")
+                .setDescription("`Üdvözlünk a ticket szobában.\n Írd le a problémád, és rövid időn belül válaszolni fog egy staff!`")
+                .setThumbnail("https://cdn.discordapp.com/attachments/558734913751482388/759406266224738324/042e160b-4663-42fb-c284-4531778c7cc3-adsasd.png")
+                .setAuthor(userxd.tag, userxd.displayAvatarURL)
+                .setFooter(Client.user.tag, Client.user.displayAvatarURL)
+                .setColor("#2da4bb");
+            channel.send(embedxd);
+            tickets[message.guild.id].ticketList[channel.id] = {
+                user: userxd
+            };
 
-    /*
-    if(cmd === `${prefix}unmute`) {
-        let unmMember = message.mentions.users.first()
-        var unmEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setTitle("Parancs: >unmute")
-        .setDescription("Helyes használat - >unmute (felhasználó) \n Példa - >unmute @P4TR1K \n Jogosultság: `SZEREPEK KEZELÉSE` \n \n **LEÍRÁS** | Ezzel a paranccsal némított felhasználókat tudsz feloldani a némítás alól!");
-        if(!unmMember) return message.channel.send(unmEmbed);
-        //      
-        message.channel.overwritePermissions(unmMember.id, {
-            SEND_MESSAGES: true
-        });
-        unmMember.send(`Némításod fel lett oldva a(z) **${message.guild.name} szerveren!**`);
-        let unmuteEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setDescription(`:white_check_mark: ${unmMember} némítása fel lett oldva ${message.author} által!`);
-
-        message.channel.send(unmuteEmbed);
-    }
-    */
-	if(cmd === `${prefix}rank`){
-        let user = message.mentions.users.first() || message.author;
-        //xp2003 offos
-        //const canvas = new Canvacord();
-		mysqlPool.getConnection(function(err,uwu){
- 
-            if(err){
-                console.log(":'(");
-                return;
-            }
-            console.log("uwu connected");
-            //let sqlxd = `if exists(SELECT * from xp where memberID='${message.author.id}') \n BEGIN \n update xp set currentXP = '70' WHERE memberID='${message.author.id}' \n End\nelse\nbegin\ninsert into xp (guildID,memberID,currentXP,neededXP) VALUES ('${message.guild.id}', '${message.author.id}', '69', '420')\nend`;
-            let sqlxd = `SELECT * from xp where memberID='${message.author.id}'`;
-            
-            //let sql = 'INSERT INTO xp (guildID,memberID,currentXP,neededXP) VALUES (\'' + message.guild.id + '\', \'' + message.author.id + '\', \'69\', \'420\')';
-            //let sql2 = 'UPDATE xp SET currentXP = \'70\' WHERE memberID=\''+message.author.id+"\"";
-            //miért mozgatni el egér?véletlen volt c:c:véletlen levadásztad? c: xd
-            let currentxd = [];
-            let currXp = 1;
-            let currLevel = 1;
-            uwu.query(sqlxd, async function(err,res){
-                //pill c: c:
-                //currentxd=res;
-                // összes xp számolás owo kezdet \\
-                let totalXP = currXp;
-                
-                let uwuka = currLevel-1;
-                if(uwuka != 0){
-                    while(uwuka > 1){
-                        let hozzaAdando = uwuka*5;
-                        totalXP = totalXP + hozzaAdando;
-                        uwuka--;
-                        if(uwuka == 1) totalXP = totalXP + 5;
-                    }
-                } else {
-                    totalXP = currXp;
-                }
-                console.log(res[0].currentXP);
-                const rank = new Canvacord.Rank()
-                .setAvatar(message.author.avatarURL({ format: "png" }))
-                .setCurrentXP(res[0].currentXP)
-                .setRequiredXP(res[0].level * 5)
-                .setStatus(message.member.presence.status)
-                .setLevel(res[0].level)
-                .setProgressBar("#FAC800", "COLOR")
-                .setUsername(message.author.username)
-                .setDiscriminator(message.author.discriminator);
- 
-                rank.build()
-                    .then(data => {
-                         const attachment = new Discord.MessageAttachment(data, "rank.png");
-                         message.channel.send(attachment);
-                     });
-                        
-                     /*
-                    let image = await canvas.Rank({
-                        username: message.author.username,
-                        discrim: message.author.discriminator,
-                        status: message.member.presence.status,
-                        currentXP: currXp,
-                        neededXP: currXp*currLevel,
-                        totalXP,
-                        currLevel,
-                        avatarURL: message.author.displayAvatarURL({ format: "png"}),
-                        color: "white"
-                    })
-                    message.channel.send(new Discord.MessageAttachment(image, "rank.png"))
-                    */
-        
         })
-    })
-}
-    if(cmd === `${prefix}changelog`) {
-        version = version + 1;
-        message.delete().catch();
-        let msg = args.join(" ");
-        if(!msg) msg = "Nem jött ki fejlesztés!";
-        var botEmbed = new Discord.MessageEmbed()
-        .setColor("YELLOW")
-        .setTitle(`Changelog #${version}`)
-        .setThumbnail(bot.user.avatarURL)
-        .setDescription(`| FRISSÍTÉS JÖTT KI A BOTBAN | \n :small_orange_diamond: **${msg}**`)
-        .setFooter(`A frissítést közzétette: ${message.author.username}`)
-        .setTimestamp();
-        
-        message.channel.send("@everyone ", botEmbed);
+
+
+        message.channel.send("Ticket rendszer setup kész!")
     }
-    if(cmd === `${prefix}allcommands`) {
-        var commandsEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setDescription(`Jelenleg ennyi parancs van a botban: **${jsfiles.length}**`);
 
-        message.channel.send(commandsEmbed);
+    if (cmd === `${prefix}ticket-close`) {
+        if (!tickets[message.guild.id].ticketList[message.channel.id]) return message.channel.send("Ezt itt nem használhatod!")
+        let embed = new Discord.RichEmbed()
+            .setColor("#2da4bb")
+            .setTitle("`Ticket tőrlése 3 másodpercen belül...`")
+            .setThumbnail("https://cdn.discordapp.com/attachments/558734913751482388/759406266224738324/042e160b-4663-42fb-c284-4531778c7cc3-adsasd.png")
+            .setAuthor(message.author.tag, message.author.displayAvatarURL)
+            .setFooter(Client.user.tag, Client.user.displayAvatarURL)
+        message.channel.send(embed);
+        setTimeout(function() {
+            delete tickets[message.guild.id].ticketList[message.channel.id];
+            message.channel.delete().catch(hiba => {
+                console.log(hiba);
+            });
+        }, 3000)
+
     }
-    
-    if(cmd === `${prefix}stat`) {
-        message.delete().catch();
-        let enemystat = message.mentions.members.first();
-        var helpEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setTitle("Parancs: >stat")
-        .setDescription("Helyes használat - >stat (felhasználó) \n Példa - >stat @P4TR1K \n \n **LEÍRÁS** | Ezzel a paranccsal az `>1v1` paranccsal szerzett pontokat, győzelmeket tudod megtekinteni!");
-        if(!enemystat) return message.channel.send(helpEmbed);
-
-        var statEmbed = new Discord.MessageEmbed()
-        .setColor("RED")
-        .setTitle(`${enemystat.displayName} statisztikái`)
-        .setDescription(`Győzelmek -> **${onevoneStats[message.guild.id].players[enemystat.user.id].win}** \n Pontok -> **${onevoneStats[message.guild.id].players[enemystat.user.id].points}**`);
-
-        message.channel.send(statEmbed);
-    }
-    if(cmd === `${prefix}play`) {
-        message.delete().catch();
-        /*
-        message.delete().catch();
-        if (!message.member.voiceChannel) return message.channel.send('Csatlakozz egy csatornához!');
-        if (message.guild.me.voiceChannel) return message.channel.send('Bocsi, de a bot éppen másnak játszik zenét!');
-        if (!args[0]) return message.channel.send('Légy szíves adj meg egy YouTube linket!');
-        
-        let validate = await ytdl.validateURL(args[0]);
-        if(!validate) return message.channel.send('Légy szíves adj meg egy **normális** YouTube linket!');
-  
-  
-        let info = await ytdl.getInfo(args[0]);
-  
-        let connection = await message.member.voiceChannel.join();
-        const dispatcher = await connection.playArbitraryInput(ytdl(args[0], { filter: 'audioonly' }));
-        const help = new Discord.MessageEmbed()
-            .setAuthor('Zene', bot.user.avatarURL)
-            .setColor('RANDOM')
-            .setDescription(`:small_orange_diamond: Zene címe: **${info.videoDetails.title}** \n :small_blue_diamond: Csatorna neve: **${info.videoDetails.author.name}** \n :small_orange_diamond: Zene hossza: **${fancyTimeFormat(info.length_seconds)}** \n \n  :small_blue_diamond: Zene URL: ${args[0]}`)
-            message.channel.send(help)
-        dispatcher.on('end', () => {
-        setTimeout(function() {message.guild.voiceConnection.disconnect()}, 1)
-            message.channel.send("A zene véget ért, ezért lecsatlakoztam a hangcsatornáról!");
-        });
-        */
-		let serverqueue = [];
-		let connect = null;
-		let dispatch = null;
-		if(queue.get(message.guild.id)) {
-			serverqueue=queue.get(message.guild.id).queue;
-			connect=queue.get(message.guild.id).connection;
-			dispatch=queue.get(message.guild.id).dispatcher;
-		}
-		let alap = {
-			txtchannel: message.channel,
-			playing: true,
-			connection: connect,
-			
-			dispatcher: dispatch,
-			voice: message.member.voiceChannel,
-			queue: serverqueue
-		};
-		let serverQ=queue.get(message.guild.id);
-		play(message,serverQ,args,alap);
-    }
-	if(cmd === `${prefix}skip`) {
-        skip(message);
-    }
-	if(cmd===`${prefix}stop`){
-		stop(message);
-	}
-});
-
-// a kutyák már olyan idegesek hogy eszik a betontXDDDDDDDDD ez még mindig igazxdddXDDDDDDDDDDDD
-//  /\
-//  ||
-//  ||
-//imádom ezt a kommentet c: ez még mindig igaz c: EZ A FŐNÖKE pfúú de fejbebasznám az öregasszonyverő kalapáccsal? IKENXDXDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDxddddddddddddddddddddddddddDDDDDDDDDDDDDDDDDDDDD XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD HALDOKLOK XDDDDDDDDDDDDDDDDDDDDDDDDDxdddddddddddddddXDDDDDDDDDDDÉn vagyok az advanced system care: 2 terméket kell frissíteni : anyádat és apádat (kissé elavultakXDDD)
-async function skip(message){
-	let serverqueue = [];
-	let connect = null;
-	let dispatch = null;
-
-		if(queue.get(message.guild.id)) {
-			serverqueue=queue.get(message.guild.id).queue;
-			connect=queue.get(message.guild.id).connection;
-			dispatch=queue.get(message.guild.id).dispatcher;
-		}
-	
-	if(dispatch != null ){ dispatch.end(); }
-	else {
-		if(!serverqueue[0]) {
-            var embed = new Discord.MessageEmbed()
-            .setColor("GREEN")
-            .setTitle(":fast_forward: SKIP")
-            .setDescription("Nincs olyan zene, amit át tudnék ugrani! [" + message.author.username + "]");
-
-			return message.channel.send(embed)
-		} else {
-			return message.channel.send("HIBA! Nincs dispatcher!")
-			//jézusom ha valaki "kileakeli" a kódot akkor az meghal xDDxdd (a kommentektől) XD
-		}
-	}
-		
-}
-
-async function stop(message){
-	let serverqueue = [];
-	let connect = null;
-	let dispatch = null;
-
-		if(queue.get(message.guild.id)) {
-			serverqueue=queue.get(message.guild.id).queue;
-			connect=queue.get(message.guild.id).connection;
-			dispatch=queue.get(message.guild.id).dispatcher;
-		}
-	
-	if(dispatch != null ){ 
-		serverqueue = [];
-		queue.set(message.guild.id,serverqueue)
-		dispatch.end();
-	}
-	else {
-		if(!serverqueue[0]) {
-            var embed = new Discord.MessageEmbed()
-            .setColor("RED")
-            .setTitle(":pause_button: LEÁLLÍTÁS")
-            .setDescription("Nincs olyan zene, amit meg tudnék állítani! [" + message.author.username + "]");
-			return message.channel.send(embed)
-		} else {
-			return message.channel.send("HIBA! Nincs dispatcher!")
-			//jézusom ha valaki "kileakeli" a kódot akkor az meghal xDDxdd (a kommentektől) XD
-		}
-	}
-		
-}
-
-async function play(message, serverQ,args,alap){
-	let playnow = false;
-	
-	if(!serverQ){
-		
-		queue.set(message.guild.id,alap);
-		serverQ = queue.get(message.guild.id);
-		
-	}
-	if(!serverQ.queue[0]) playnow = true;
-	let validate = ytdl.validateURL(args[0]);
-	if(!validate) {
-		
-        queue.delete(message.guild.id);
-        var embed = new Discord.MessageEmbed()
-        .setColor("BLACK")
-        .setDescription(":x: Hibás linket adtál meg! [" + message.author.username + "]");
-		return message.channel.send(embed);
-	}
-	let info = await ytdl.getInfo(args[0]);
-	
-	const song = {
-		title: info.title,
-		url: args[0]
-		
-	};
-	console.log(song);
-//piwwanatElintézted az öregasszonyokat? Aha. A palacsinta finom voltXD öregasszony ízesítésű volt ilyesmikről beszélek xDDDDDDD XDD
-	if(playnow){
-		
-		alap.queue.push(song);
-		queue.set(message.guild.id,alap);
-		let serverQ = alap.queue;//a kommentek azok örökre maradnak c: pontosan c:
-		//console.log({playnow,song,serverQ})
-		try{
-			//baszki...
-			//megvan miért...
-			//nem skipel a kövire? nem, annál fájdalmasabbxd
-			let connection = await message.member.voice.channel.join();
-			alap.connection = connection;
-			playMusic(message,alap.queue[0],alap)
-		// 2cq TÖLTSÉ MÁ BE xdd 99.9999999% oof xDD
-		} catch(err) {
-			//piwwanat és jövök c: (fun fact: azóta visszajöttem)
-			
-			queue.delete(message.guild.id);
-		}
-		//nézd a varázstrükkömet VARÁÁÁZSLAAAT C: xddd
-	} else {
-		alap.queue.push(song);
-		queue.set(message.guild.id,alap);
-		let serverQ = alap.queue;
-		//console.log({playnow,song,serverQ})
-        //pislogás
-        var embed = new Discord.MessageEmbed()
-        .setColor("YELLOW")
-        .setTitle(":scroll: LEJÁTSZÁSI LISTA")
-        .setDescription(`:white_check_mark: **${song.title}** hozzá adva a lejátszási listához! [${message.author}]`);
-		message.channel.send(embed)
-	}
-	
-	
-	
-}
-
-function playMusic(message,song,alap){
-	
-	//patrik
-	//nem jöttem já a hibára... xd ui.: na meg a faszomat nem
-	let meow = queue.get(message.guild.id);
-    var embed = new Discord.MessageEmbed()
-    .setColor("GREEN")
-    .setDescription(`:microphone: Most játszódik - **${meow.queue[0].title}** [${message.author}]`);
-	meow.txtchannel.send(embed);
-	//console.log({song, meow});
-	const dispatcher = meow.connection.play(ytdl(song.url)).on('finish', ()=>{
-		
-		
-		//console.log(meow.queue)
-		meow.queue.shift(1);
-		//console.log(meow.queue)
-		
-		//if(meow.queue[0]) play(message,meow.queue[0],args,meow);
-		if(meow.queue[0]) playMusic(message,meow.queue[0],alap)
-		if(!meow.queue[0]) {
-            var embed = new Discord.MessageEmbed()
-            .setColor("RED")
-            .setDescription(":red_circle: Vége a lejátszási listának!");
-			meow.txtchannel.send(embed);
-			queue.delete(message.guild.id);
-			
-		}
-	})
-	.on('error', err=>{
-		console.error(err);
-	});
-	meow.dispatcher = dispatcher;//itt vagy amúgy? c: iken :3 jó c: én közben eszek C: :3 zöldséges tésztát c: (fú de fogom irigyelni a mostani énemet a jövőben) xd
-	queue.set(message.guild.id, meow);
-}
 
 
-bot.login(require(__dirname + '/config.json').token);
+Client.login(require(__dirname + '/config.json').token);
