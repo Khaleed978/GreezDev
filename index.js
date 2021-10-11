@@ -10,16 +10,7 @@ const config = require('./config.json');
 
 
 //minyáu köszönömc:
-const mysql = require('mysql2');
-const mysqlPool = mysql.createPool({
-host: 'mysql.srkhost.eu',
-user: 'u4662_S12P34H8bc',
-password: '8k9ZiJDa0aNm',
-database: 's4662_crossfire',
-waitForConnections: true,
-connectionLimit: 10,
-queueLimit: 0
-});
+
 const onevoneStats = {};
 let queue = new Map();
 //
