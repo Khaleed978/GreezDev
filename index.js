@@ -118,41 +118,7 @@ bot.on("message", async message => { // az index.js-t nem kell a commandsba rakn
         .setDescription("Helló! A prefixem `>` \n Segítségre van szükséged? Használd a `>help (probléma)` parancsot, vagy a fejlesztőket privátban! \n Bot fejlesztő `P4TR1K` - `P4TR1K#5089` \n Parancsok `>parancsok`");
         message.channel.send(hyEmbed);
     }
-    if(!message.content.startsWith(prefix)) return;
-    if(devmode == 1){
-        console.log({devmode});
-        let memeid = message.author.id;
-        if (ownerIds.some(id => memeid.includes(id))) {// owner
-            
-    
-        } else {
-            return message.channel.send(devEmbed);
-        }
-    } else {
-        console.log({devmode});
-    }
-    if(commandf) {
-        let asdsaxd = {
-            command: commandf.name,
-            time: Date.now()
-        };//mit keresni? c: pontosan ezt c:c:_
-        if(commandf.help.cooldown){
-            console.log("van cooldown")
-            if(!cooldown[message.author.id] || !cooldown[message.author.id].command){
-                cooldown[message.author.id] = asdsaxd;
-                cdFunction(message,commandf.help.cooldown) // uwu
-                commandf.run(bot,message,args,onevoneStats,devmode);
-            } else {
-                let time = Date.now() - cooldown[message.author.id].time;
-                message.channel.send(`Nem használhatod még ezt a parancsot ${Math.floor(time / 1000)} másodpercig!`);
-            }
-            
-        } else {
-            commandf.run(bot,message,args,onevoneStats,devmode);
-        }
-        
-        
-    }
+
     
   
     
