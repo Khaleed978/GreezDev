@@ -104,4 +104,4 @@ Client.on("message", async message => {
     }
 
 
-Client.login(NzYwNDYzMzIxMDg5OTY2MDgw.X3MaqA.YnYW5nIbjAke1F-iVKDxhCl0jGs);
+Client.login();
